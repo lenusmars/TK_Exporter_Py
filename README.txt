@@ -1,4 +1,8 @@
-These are pretty straighforward.  The scripts download everything to a dated folder.
+These are pretty straighforward.  
+
+The scripts download everything in json to a dated folder.
+Campaigns each get a folder with roleplays and discussion subfolders.
+All characters under your user_id get downloaded to a 'characters' subfolder, with a names subfolder for each character and the images if available.
 
 Option 1. If you want to use the jupyter notebook you want tk_v1.ipynb.
 
