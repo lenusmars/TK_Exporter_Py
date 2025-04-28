@@ -12,7 +12,7 @@ To get user id, go on tk and log in.  Open the inspect window in your browser an
 
 Go to the network tab of the inspector in your browser and then reload the tk page.  Scroll up and highlight the first entry.  You should get a pop up that shows you several things.  
 
-You're looking for the session cookie. It's probably labeled 'cookie' and is super long.  It starts with "tavern-keeper:..."
+You're looking for the session cookie. It's probably labeled 'cookie' and is super long.  It starts with "tavern-keeper=..."
 
 Copy that value and paste it into a text editor.  Then copy the string between the = sign and the first ;.
 
