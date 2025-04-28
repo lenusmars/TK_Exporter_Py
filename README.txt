@@ -2,7 +2,7 @@ These are pretty straighforward.  The scripts download everything to a dated fol
 
 Option 1. If you want to use the jupyter notebook you want tk_v1.ipynb.
 
-Option 2. If you want to use a straight python script you want tk_v2.python
+Option 2. If you want to use a straight python script you want tk_v2.py
 
 Option 3. If you want to try the windows executable I made of this script then download tk_v2.zip, unzip it.  It's a command line tool so you still have to use either cmd or powershell to run it.  
 
