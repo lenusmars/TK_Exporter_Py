@@ -1,3 +1,10 @@
+2025-04-28
+
+Updated code to capture characters for each campaign. Don't know how I left it out the first time.
+
+
+2025-04-27
+
 These are pretty straighforward.  
 
 The scripts download everything in json to a dated folder.
