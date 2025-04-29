@@ -122,6 +122,7 @@ def get_campaign(cid, cname):
     cam_subpath = sanitize_filename("_".join([str(cid), cname]))
     rp_list = get_roleplay_list(cid, cname, cam_subpath)
     dis_list = get_discussion_list(cid, cname, cam_subpath)
+    char_list = get_charlist_campaign(cid, cname, cam_subpath)
     for rpid in rp_list:
     # for rpid in rp_list[:5]:       
         print(f"Getting roleplay {rpid} for campaign {cid}.")
@@ -131,34 +132,51 @@ def get_campaign(cid, cname):
     # for did in dis_list[:5]:
         print(f"Getting discussion {did} for campaign {cid}")
         get_discussion(did, cid, cam_subpath)
+    for char in char_list:
+    # for char in char_list[:5]:
+        chrid, cname = char
+        print(f"Getting character {chrid} for campaign {cid}")
+        get_character(chrid, cname, cam_subpath + "/characters")
     print(f"Campaign {cid} complete")
     # return rp_list
     # return rp_data
 
 
-def get_character_list(uid):
+def get_charlist_campaign(cid, cname, cam_path):
+    req_char = f'/api_v0/campaigns/{cid}/characters'
+    char_list = get_tk_data(req_char, 'characters')
+    subpath = cam_path + "/characters"
+    filename = f"index_char_list_campaign_{cid}.json"
+    write_outfile(char_list, filename, subpath)
+    return [(char['id'], char['name']) for char in char_list]
+
+
+def get_charlist_user(uid):
     req_char = f'/api_v0/users/{uid}/characters'
     char_lists = [get_tk_data(req_char, 'characters'),
-                  get_tk_data(req_char + "?archived=true", 'characters')
-                 ]
+                  get_tk_data(req_char + "?archived=true", 'characters')]
     char_list = char_lists[0] + char_lists[1]
     filename = f"index_char_list_user_{user_id}.json"
     write_outfile(char_list, filename, "characters")
-    return [[char['id'] for char in char_list], 
-            [char['name'] for char in char_list]
-           ]
+    return [(char['id'], char['name']) for char in char_list]
+
 
 def get_tk_characters(uid):
-    list_char_id, list_char_nm = get_character_list(uid)
-    for char in zip(list_char_id, list_char_nm):
+    char_list = get_charlist_user(uid)
+    char_subpath = "characters"
+    for char in char_list:
         cid, name = char
-        print(f"Fetching character {cid} {name}")
-        req = f'/api_v0/characters/{cid}'
-        char_data = get_tk_data(req)
-        if not char_data:
-            continue
+        get_character(cid, name, char_subpath)
+    print("Character download is complete.")
+
+
+def get_character(cid, name, char_path):
+    print(f"Fetching character {cid} {name}")
+    req = f'/api_v0/characters/{cid}'
+    char_data = get_tk_data(req)
+    if char_data:
         dirname = sanitize_filename(f"{cid}_{name}")
-        char_subpath = f"characters/{dirname}"
+        char_subpath = f"{char_path}/{dirname}"
         filename = dirname + ".json"
         write_outfile(char_data, filename, char_subpath)
 
@@ -167,16 +185,15 @@ def get_tk_characters(uid):
             r = requests.get(portrait_url, stream=True)
             if r.status_code !=200:
                 print(r.status_code, 'portrait download failed')
-                continue
-            path_portrait = os.path.join(export_dir + "/" + char_subpath, dirname + ".jpg")
-            with open(path_portrait, 'wb') as f:
-                for chunk in r:
-                    f.write(chunk)
+            else:
+                path_portrait = os.path.join(export_dir + "/" + char_subpath, dirname + ".jpg")
+                with open(path_portrait, 'wb') as f:
+                    for chunk in r:
+                        f.write(chunk)
         else:
-            print("No portrait url.")
-    print("Character download is complete.")
-        
-        
+            print("No portrait url.")    
+
+
 def get_roleplay_list(cid, cname, cam_path):
     cam_path = cam_path + "/roleplays"
     print(f'Fetching roleplay list for campaign {cid}.')
@@ -228,7 +245,6 @@ def get_roleplay(rid, cam_path):
     fname = f"roleplay_{rid}_{rp_data['name']}.json"
     write_outfile(rp_data, fname, cam_path)
     return rp_data
-
 
 get_tk_characters(user_id)
 get_tk_campaigns(user_id)
